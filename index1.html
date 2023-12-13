@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шифрование и дешифрование</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-image: url('111.jpg'); 
+            background-size: cover;
+        }
+
+        header {
+            background-color: #191818;
+            color: white;
+            padding: 50px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        #title-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #burger-menu {
+            flex-direction: column;
+            align-items: flex-end;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 100px;
+        }
+
+        #burger-menu-icon {
+            font-size: 24px;
+        }
+
+        #burger-menu-content {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1;
+        }
+
+        #burger-menu-content a {
+            display: block;
+            color: white;
+            padding: 5px;
+            text-decoration: none;
+        }
+
+        #burger-menu-content a:hover {
+            background-color: #555;
+        }
+
+        #container {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        textarea {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            resize: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 50px;
+        }
+
+        button:hover {
+        background-color: #252525; 
+        color: #fff;
+        }
+
+        #result-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        #outputText {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            resize: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #action-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        #copyButton, #clearButton {
+            width: 48%;
+        }
+
+        
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            margin-top: auto;
+        }
+    </style>
+    <script>
+        var charMap = {
+            'А': '/',
+            'Б': '#',
+            'В': '@',
+            'Г': '$',
+            'Д': '%',
+            'Е': '^',
+            'Ё': '&',
+            'Ж': '*',
+            'З': '(',
+            'И': ')',
+            'Й': '-',
+            'К': '_',
+            'Л': '+',
+            'М': '=',
+            'Н': '[',
+            'О': ']',
+            'П': '{',
+            'Р': '}',
+            'С': '|',
+            'Т': ';',
+            'У': ':',
+            'Ф': '<',
+            'Х': '>',
+            'Ц': ',',
+            'Ч': '.',
+            'Ш': '?',
+            'Щ': '/',
+            'Ъ': '~',
+            'Ы': '`',
+            'Ь': '!',
+            'Э': '"',
+            'Ю': '\'',
+            'Я': '\\',
+            ' ': ' ',
+        };
+
+        
+
+        function processText(processFunction) {
+            var inputText = document.getElementById('inputText').value.toUpperCase();
+            var resultText = '';
+
+            for (var i = 0; i < inputText.length; i++) {
+                var char = inputText.charAt(i);
+                resultText += processFunction(char);
+            }
+
+            document.getElementById('outputText').value = resultText;
+            history.push(resultText);
+            updateHistory();
+        }
+
+        function encrypt() {
+            processText(char => charMap[char] || char);
+        }
+
+        function decrypt() {
+            processText(char => getKeyByValue(charMap, char) || char);
+        }
+
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
+
+        function toggleBurgerMenu() {
+            var burgerMenuContent = document.getElementById('burger-menu-content');
+            burgerMenuContent.style.display = burgerMenuContent.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function closeBurgerMenu() {
+            var burgerMenuContent = document.getElementById('burger-menu-content');
+            burgerMenuContent.style.display = 'none';
+        }
+
+        function copyOutput() {
+            var outputText = document.getElementById('outputText');
+            outputText.select();
+            document.execCommand('copy');
+            alert('Текст скопирован в буфер обмена');
+        }
+
+        function clearOutput() {
+            document.getElementById('outputText').value = '';
+        }
+
+        function updateHistory() {
+            var historyContainer = document.getElementById('history');
+            historyContainer.innerHTML = '';
+            for (var i = 0; i < history.length; i++) {
+                var item = document.createElement('div');
+                item.textContent = history[i];
+                historyContainer.appendChild(item);
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div id="burger-menu" onclick="toggleBurgerMenu()">
+            <div id="burger-menu-icon">&#9776;</div>
+            <div id="burger-menu-content">
+                <a href="nzdz.html" onclick="encrypt(); closeBurgerMenu()">Шифрование</a>
+                <a href="index.html" onclick="closeBurgerMenu()">Про Шифрование</a>
+                <a href="index2.html" onclick="closeBurgerMenu()">Техническое задание</a>
+                <a href="index3.html" onclick="closeBurgerMenu()">О проекте</a>
+                <a href="index4.html" onclick="closeBurgerMenu()">О нас</a>
+            </div>
+        </div>
+        <div id="title-container">
+            <h1>Шифрование и дешифрование</h1>
+        </div>
+    </header>
+
+    <div id="container">
+        <textarea id="inputText" rows="4" placeholder="Введите текст..."></textarea>
+
+        <button onclick="encrypt()">Зашифровать</button>
+        <button onclick="decrypt()">Расшифровать</button>
+
+        <div id="result-container">
+            <textarea id="outputText" rows="4" readonly placeholder="Результат..."></textarea>
+            <div id="action-buttons">
+                <button id="copyButton" onclick="copyOutput()">Копировать</button>
+                <button id="clearButton" onclick="clearOutput()">Очистить</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; Nurzat and Dias</p>
+    </footer>
+</body>
+</html>
